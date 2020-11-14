@@ -51,26 +51,26 @@ CREATE DATABASE restaurant_api;
 
 ### Restaurant Routes
 
-`GET /api/v1/restaurants/`
-`GET /api/v1/restaurants/:id`
-`POST /api/v1/restaurants/`
-`PATCH /api/v1/restaurants/:id`
+`GET /api/v1/restaurants/`  
+`GET /api/v1/restaurants/:id`  
+`POST /api/v1/restaurants/`  
+`PATCH /api/v1/restaurants/:id`  
 `DELETE /api/v1/restaurants/:id`
 
 ### Review Routes
 
-`GET /api/v1/reviews/`
-`GET /api/v1/reviews/restaurant/:id`
-`GET /api/v1/reviews/:id`
-`POST /api/v1/reviews/`
-`PATCH /api/v1/reviews/:id`
+`GET /api/v1/reviews/`  
+`GET /api/v1/reviews/restaurant/:id`  
+`GET /api/v1/reviews/:id`  
+`POST /api/v1/reviews/`  
+`PATCH /api/v1/reviews/:id`  
 `DELETE /api/v1/reviews/:id`
 
 ## Things To Consider
 
-Protecting certain routes
-Improving validation and sanitization using a package such as Joi
-Custom CORS setup
+Protecting certain routes  
+Improving validation and sanitization using a package such as Joi  
+Custom CORS setup  
 Tweaking the already-set rate limiting
 
 ## Sample Requests
