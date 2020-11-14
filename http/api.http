@@ -1,0 +1,65 @@
+###
+### Restaurants
+###
+
+###
+GET http://localhost:5000/api/v1/restaurants
+
+###
+GET http://localhost:5000/api/v1/restaurants/1
+
+###
+POST http://localhost:5000/api/v1/restaurants
+Content-Type: application/json
+
+{
+    "name": "Satan's Grill",
+    "description": "Your go-to place for all spicy!",
+    "location": "Main Street",
+    "website": "https://google.com"
+}
+
+###
+PATCH http://localhost:5000/api/v1/restaurants/1
+Content-Type: application/json
+
+{
+    "name": "Satan's Updated Grill"
+}
+
+###
+DELETE http://localhost:5000/api/v1/restaurants/1
+
+###
+### Reviews
+###
+
+###
+GET http://localhost:5000/api/v1/reviews
+
+###
+GET http://localhost:5000/api/v1/reviews/restaurant/1
+
+###
+GET http://localhost:5000/api/v1/reviews/1
+
+###
+POST http://localhost:5000/api/v1/reviews
+Content-Type: application/json
+
+{
+    "restaurant_id": 1,
+    "rating": "5",
+    "review": "Very spicy indeed.. As I had found out later at home.."
+}
+
+###
+PATCH http://localhost:5000/api/v1/reviews/1
+Content-Type: application/json
+
+{
+    "name": "John Doe"
+}
+
+###
+DELETE http://localhost:5000/api/v1/reviews/1
