@@ -40,34 +40,30 @@ const { databaseConnection } = require('./config/Sequelize.config');
 // Initialize app
 const app = express();
 
-// Helmet Middleware
-app.use(helmet());
-
 // CORS
 const { ORIGIN } = process.env;
 assert(ORIGIN, 'ORIGIN is required');
 
-const corsOptionsDelegate = (req, callback) => {
-  console.log('Checking origin for ', req.header('Origin'));
-
-  let corsOptions;
-  const isOriginAllowed = req.header('Origin') === ORIGIN;
-  if (isOriginAllowed) {
-    corsOptions = {
-      origin: true,
-      optionsSuccessStatus: 200, // Legacy browser support
-      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    };
-  } else {
-    corsOptions = {
-      origin: false,
-    };
-  }
-  callback(null, corsOptions);
+const corsOptions = {
+  origin: ORIGIN,
+  optionsSuccessStatus: 200, // Legacy browser support
+  methods: 'GET, POST, PATCH, DELETE',
 };
 
-app.use(cors(corsOptionsDelegate));
-app.options('*', cors(corsOptionsDelegate));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Helmet Middleware
+app.use(helmet());
+const frameguard = require('frameguard');
+app.use(frameguard());
+const xssFilter = require('x-xss-protection');
+app.use(xssFilter());
+const ienoopen = require('ienoopen');
+app.use(ienoopen());
+const nosniff = require('dont-sniff-mimetype');
+app.use(nosniff());
+app.disable('x-powered-by');
 
 // If behind a reverse proxy
 app.set('trust proxy', 1);
