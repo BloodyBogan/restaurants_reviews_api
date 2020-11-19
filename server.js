@@ -1,7 +1,9 @@
 'use strict';
 
 const path = require('path');
+const assert = require('assert');
 const express = require('express');
+const cors = require('cors');
 const Ddos = require('ddos');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -40,6 +42,32 @@ const app = express();
 
 // Helmet Middleware
 app.use(helmet());
+
+// CORS
+const { ORIGIN } = process.env;
+assert(ORIGIN, 'ORIGIN is required');
+
+const corsOptionsDelegate = (req, callback) => {
+  console.log('Checking origin for ', req.header('Origin'));
+
+  let corsOptions;
+  const isOriginAllowed = req.header('Origin') === ORIGIN;
+  if (isOriginAllowed) {
+    corsOptions = {
+      origin: true,
+      optionsSuccessStatus: 200, // Legacy browser support
+      methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    };
+  } else {
+    corsOptions = {
+      origin: false,
+    };
+  }
+  callback(null, corsOptions);
+};
+
+app.use(cors(corsOptionsDelegate));
+app.options('*', cors(corsOptionsDelegate));
 
 // If behind a reverse proxy
 app.set('trust proxy', 1);
