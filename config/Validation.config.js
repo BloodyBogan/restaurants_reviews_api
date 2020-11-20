@@ -1,3 +1,5 @@
+'use strict';
+
 const Joi = require('joi');
 
 //
@@ -135,5 +137,57 @@ exports.patchReviewSchema = Joi.object({
     'string.base': 'Review name must be a type of text',
     'string.empty': 'Review name must not be empty',
     'string.max': 'Review name must not be longer than 255 characters',
+  }),
+});
+
+//
+// Users
+//
+exports.signupUserSchema = Joi.object({
+  username: Joi.string()
+    .empty()
+    .trim()
+    .alphanum()
+    .min(3)
+    .max(255)
+    .required()
+    .messages({
+      'string.base': 'Username must be a type of text',
+      'string.empty': 'Username must not be empty',
+      'string.alphanum': 'Username must only contain a-z, A-Z, and 0-9',
+      'string.min': 'Username must be at least 3 characters long',
+      'string.max': 'Username must not be longer than 255 characters',
+      'any.required': 'Username is required',
+    }),
+  email: Joi.string().empty().trim().email().max(255).required().messages({
+    'string.base': 'Email must be a type of text',
+    'string.empty': 'Email must not be empty',
+    'string.email': 'Email must be a valid email address',
+    'string.max': 'Email must not be longer than 255 characters',
+    'any.required': 'Email is required',
+  }),
+  password: Joi.string().empty().trim().min(8).max(255).required().messages({
+    'string.base': 'Password must be a type of text',
+    'string.empty': 'Password must not be empty',
+    'string.min': 'Password must be at least 8 characters long',
+    'string.max': 'Password must not be longer than 255 characters',
+    'any.required': 'Password is required',
+  }),
+  confirmPassword: Joi.any()
+    .valid(Joi.ref('password'))
+    .required()
+    .messages({ 'any.only': 'Passwords do not match' }),
+});
+
+exports.loginUserSchema = Joi.object({
+  email: Joi.string().empty().trim().required().messages({
+    'string.base': 'Email must be a type of text',
+    'string.empty': 'Email must not be empty',
+    'any.required': 'Email is required',
+  }),
+  password: Joi.string().empty().trim().required().messages({
+    'string.base': 'Password must be a type of text',
+    'string.empty': 'Password must not be empty',
+    'any.required': 'Password is required',
   }),
 });

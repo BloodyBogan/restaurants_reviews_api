@@ -10,6 +10,7 @@ GET http://localhost:5000/api/v1/restaurants/1
 
 ###
 POST http://localhost:5000/api/v1/restaurants
+Authorization:
 Content-Type: application/json
 
 {
@@ -21,6 +22,7 @@ Content-Type: application/json
 
 ###
 PATCH http://localhost:5000/api/v1/restaurants/1
+Authorization:
 Content-Type: application/json
 
 {
@@ -29,6 +31,7 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:5000/api/v1/restaurants/1
+Authorization:
 
 ###
 ### Reviews
@@ -45,6 +48,7 @@ GET http://localhost:5000/api/v1/reviews/1
 
 ###
 POST http://localhost:5000/api/v1/reviews
+Authorization:
 Content-Type: application/json
 
 {
@@ -55,6 +59,7 @@ Content-Type: application/json
 
 ###
 PATCH http://localhost:5000/api/v1/reviews/1
+Authorization:
 Content-Type: application/json
 
 {
@@ -63,3 +68,28 @@ Content-Type: application/json
 
 ###
 DELETE http://localhost:5000/api/v1/reviews/1
+Authorization:
+
+###
+### Auth
+###
+
+###
+POST http://localhost:5000/auth/signup
+Content-Type: application/json
+
+{
+    "username": "Michal",
+    "email": "email@example.com",
+    "password": "password",
+    "confirmPassword": "password"
+}
+
+###
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+    "email": "email@example.com",
+    "password": "password"
+}

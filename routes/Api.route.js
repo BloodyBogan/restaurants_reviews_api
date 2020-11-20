@@ -1,6 +1,9 @@
 'use strict';
 
 const router = require('express').Router();
+const passport = require('passport');
+const { allowOnly } = require('../middleware/allowOnly.middleware');
+const { accessLevels } = require('../config/Roles.config');
 const {
   getRestaurants,
   getRestaurant,
@@ -18,34 +21,54 @@ const {
 //
 // Restaurants
 //
-
-// @route /api/v1/restaurants
-// @access Public
-router.route('/restaurants').get(getRestaurants).post(addRestaurant);
-// @route /api/v1/restaurants/:id
-// @access Public
+router
+  .route('/restaurants')
+  .get(allowOnly(accessLevels.guest), getRestaurants)
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    allowOnly(accessLevels.admin),
+    addRestaurant
+  );
 router
   .route('/restaurants/:id')
-  .get(getRestaurant)
-  .patch(updateRestaurant)
-  .delete(deleteRestaurant);
+  .get(allowOnly(accessLevels.guest), getRestaurant)
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    allowOnly(accessLevels.admin),
+    updateRestaurant
+  )
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    allowOnly(accessLevels.admin),
+    deleteRestaurant
+  );
 
 //
 //Reviews
 //
-
-// @route /api/v1/reviews
-// @access Public
-router.route('/reviews').get(getReviews).post(addReview);
-// @route /api/v1/reviews/:id
-// @access Public
+router
+  .route('/reviews')
+  .get(allowOnly(accessLevels.guest), getReviews)
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    allowOnly(accessLevels.user),
+    addReview
+  );
 router
   .route('/reviews/:id')
-  .get(getReview)
-  .patch(updateReview)
-  .delete(deleteReview);
-// @route /api/v1/reviews/restaurant/:id
-// @access Public
-router.route('/reviews/restaurant/:id').get(getReviewsForRestaurant);
+  .get(allowOnly(accessLevels.guest), getReview)
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    allowOnly(accessLevels.user),
+    updateReview
+  )
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    allowOnly(accessLevels.user),
+    deleteReview
+  );
+router
+  .route('/reviews/restaurant/:id')
+  .get(allowOnly(accessLevels.guest), getReviewsForRestaurant);
 
 module.exports = router;

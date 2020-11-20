@@ -3,6 +3,7 @@
 const path = require('path');
 const assert = require('assert');
 const express = require('express');
+const passport = require('passport');
 const cors = require('cors');
 const Ddos = require('ddos');
 const rateLimit = require('express-rate-limit');
@@ -73,6 +74,7 @@ app.use(limiter);
 
 // Body parser middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -80,10 +82,15 @@ if (!isProduction) {
   app.use(require('volleyball'));
 }
 
+// Passport
+app.use(passport.initialize());
+require('./config/Passport.config')(passport);
+
 // Set the static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
+app.use('/auth', require('./routes/Auth.route'));
 app.use('/api/v1', require('./routes/Api.route'));
 
 // 404

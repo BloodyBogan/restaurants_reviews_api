@@ -6,6 +6,7 @@ const db = require('./Database.config');
 // Models
 const RestaurantModel = require('../models/Restaurant.model');
 const ReviewModel = require('../models/Review.model');
+const UserModel = require('../models/User.model');
 
 const sequelize = new Sequelize(db.DATABASE, db.USER, db.PASSWORD, {
   host: db.HOST,
@@ -22,6 +23,7 @@ const sequelize = new Sequelize(db.DATABASE, db.USER, db.PASSWORD, {
 
 const Restaurant = RestaurantModel(sequelize, Sequelize);
 const Review = ReviewModel(sequelize, Sequelize);
+const User = UserModel(sequelize, Sequelize);
 
 Restaurant.hasMany(Review, {
   foreignKey: 'restaurant_id',
@@ -56,4 +58,5 @@ module.exports = {
   databaseConnection,
   Restaurant,
   Review,
+  User,
 };
