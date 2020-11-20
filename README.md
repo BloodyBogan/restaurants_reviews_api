@@ -69,7 +69,6 @@ CREATE DATABASE restaurant_api;
 ## Things To Consider
 
 Protecting certain routes  
-Improving validation and sanitization using a package such as Joi  
 Custom CORS setup  
 Tweaking the already-set rate limiting
 

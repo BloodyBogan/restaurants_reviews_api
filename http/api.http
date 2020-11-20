@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
     "name": "Satan's Grill",
-    "description": "Your go-to place for all spicy!",
+    "description": "Your go-to place for all spicy! Newer iterations of spicy dishes feature not just heat, but pickled, savory, sour, smoky and sweet elements as well. In other words, complex flavors are what’s hot right now—both literally and figuratively.",
     "location": "Main Street",
     "website": "https://google.com"
 }

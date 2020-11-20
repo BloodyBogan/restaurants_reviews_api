@@ -21,15 +21,19 @@ module.exports = (sequelize, type) => {
       allowNull: false,
     },
     description: {
-      type: type.STRING,
+      type: type.TEXT,
       allowNull: false,
     },
     location: {
       type: type.STRING,
       allowNull: false,
     },
+    website: {
+      type: type.STRING,
+      allowNull: false,
+    },
     imageUrl: {
-      type: type.TEXT,
+      type: type.STRING,
       allowNull: true,
       defaultValue: `${HOST}:${PORT}/assets/img/placeholder-restaurant.png`,
     },

@@ -2,6 +2,12 @@
 
 const Sequelize = require('sequelize');
 const { Restaurant, Review } = require('../config/Sequelize.config');
+const {
+  postRestaurantSchema,
+  patchRestaurantSchema,
+  postReviewSchema,
+  patchReviewSchema,
+} = require('../config/Validation.config');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -124,87 +130,10 @@ exports.getRestaurant = async (req, res) => {
 // @route POST /api/v1/restaurants
 // @access Public
 exports.addRestaurant = async (req, res) => {
-  for (let key in req.body) {
-    key = key.trim().toString();
-  }
-
   try {
-    let { name, description, location, website } = req.body;
+    const validationResult = await postRestaurantSchema.validateAsync(req.body);
 
-    if (name === '') {
-      res.status(422);
-      throw new Error('Restaurant name is required');
-    }
-
-    if (description === '') {
-      res.status(422);
-      throw new Error('Restaurant description is required');
-    }
-
-    if (location === '') {
-      res.status(422);
-      throw new Error('Restaurant location is required');
-    }
-
-    if (website === '') {
-      res.status(422);
-      throw new Error('Restaurant location is required');
-    }
-
-    if (name.length > 255) {
-      res.status(422);
-      throw new Error('Restaurant name must not be longer than 255 characters');
-    }
-
-    if (description.length > 500) {
-      res.status(422);
-      throw new Error(
-        'Restaurant description must not be longer than 500 characters'
-      );
-    }
-
-    if (location.length > 255) {
-      res.status(422);
-      throw new Error(
-        'Restaurant location must not be longer than 255 characters'
-      );
-    }
-
-    if (website.length > 255) {
-      res.status(422);
-      throw new Error(
-        'Restaurant website must not be longer than 255 characters'
-      );
-    }
-
-    const expression = /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
-    const regex = new RegExp(expression);
-
-    if (!regex.test(website)) {
-      res.status(422);
-      throw new Error('Restaurant website must not be a valid URL');
-    }
-
-    if (req.body.imageUrl) {
-      if (req.body.imageUrl === '') {
-        res.status(422);
-        throw new Error('Restaurant image URL must not be empty');
-      }
-
-      if (req.body.imageUrl.length > 255) {
-        res.status(422);
-        throw new Error(
-          'Restaurant image URL must not be longer than 255 characters'
-        );
-      }
-
-      if (!regex.test(imageUrl)) {
-        res.status(422);
-        throw new Error('Restaurant image URL must not be a valid URL');
-      }
-    }
-
-    const restaurant = await Restaurant.create(req.body);
+    const restaurant = await Restaurant.create(validationResult);
 
     return res.status(201).json({
       success: true,
@@ -233,13 +162,9 @@ exports.addRestaurant = async (req, res) => {
 // @route PATCH /api/v1/restaurants/:id
 // @access Public
 exports.updateRestaurant = async (req, res) => {
-  for (let key in req.body) {
-    key = key.trim().toString();
-  }
+  const { id } = req.params;
 
   try {
-    const { id } = req.params;
-
     Object.keys(req.body).forEach(
       (key) =>
         req.body[key] == (null || undefined || '') && delete req.body[key]
@@ -260,7 +185,11 @@ exports.updateRestaurant = async (req, res) => {
       throw new Error(`Restaurant with ID ${id} doesn't exist`);
     }
 
-    const updatedRestaurant = await restaurant.update(req.body);
+    const validationResult = await patchRestaurantSchema.validateAsync(
+      req.body
+    );
+
+    const updatedRestaurant = await restaurant.update(validationResult);
 
     // 204
     return res.status(200).json({
@@ -422,57 +351,18 @@ exports.getReview = async (req, res) => {
 // @route POST /api/v1/reviews
 // @access Public
 exports.addReview = async (req, res) => {
-  for (let key in req.body) {
-    key = key.trim().toString();
-  }
+  const { restaurant_id } = req.body;
 
   try {
-    const { restaurant_id, rating, review } = req.body;
-    console.log(rating);
-    if (restaurant_id === '') {
-      res.status(422);
-      throw new Error('Restaurant ID is required');
-    }
-
-    if (rating === '') {
-      res.status(422);
-      throw new Error('Rating is required');
-    }
-
-    if (review === '') {
-      res.status(422);
-      throw new Error('Review body is required');
-    }
-
-    if (!['1', '2', '3', '4', '5'].some((value) => value == rating)) {
-      res.status(422);
-      throw new Error('Invalid rating');
-    }
-
-    if (review.length > 500) {
-      res.status(422);
-      throw new Error('Review body must not be longer than 500 characters');
-    }
-
-    if (req.body.name) {
-      if (req.body.name === '') {
-        res.status(422);
-        throw new Error('Name must not be empty');
-      }
-
-      if (req.body.name.length > 255) {
-        res.status(422);
-        throw new Error('Name must not be longer than 255 characters');
-      }
-    }
-
     const restaurant = await Restaurant.findOne({ where: { restaurant_id } });
     if (!restaurant) {
       res.status(404);
       throw new Error(`Restaurant with ID ${restaurant_id} doesn't exist`);
     }
 
-    const createdReview = await Review.create(req.body);
+    const validationResult = await postReviewSchema.validateAsync(req.body);
+
+    const createdReview = await Review.create(validationResult);
 
     const reviewWithAssociations = await Review.findOne({
       where: { review_id: createdReview.review_id },
@@ -530,7 +420,12 @@ exports.updateReview = async (req, res) => {
       res.status(404);
       throw new Error(`Review with ID ${id} doesn't exist`);
     }
-    const updatedReview = await review.update(req.body);
+
+    const validationResult = await patchRestaurantSchema.validateAsync(
+      req.body
+    );
+
+    const updatedReview = await review.update(validationResult);
 
     // 204
     return res.status(200).json({
