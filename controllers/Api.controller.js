@@ -47,15 +47,16 @@ exports.getRestaurants = async (req, res) => {
       group: ['restaurant.restaurant_id'],
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: restaurants,
       count: restaurants.length,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -65,9 +66,9 @@ exports.getRestaurants = async (req, res) => {
 // @route GET /api/v1/restaurants/:id
 // @access Public
 exports.getRestaurant = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
+  try {
     const restaurant = await Restaurant.findOne({
       where: { restaurant_id: id },
       attributes: {
@@ -109,18 +110,19 @@ exports.getRestaurant = async (req, res) => {
 
     restaurant.dataValues.reviews = reviews;
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: restaurant,
     });
   } catch (error) {
-    if (!res.statusCode === 404) {
+    if (!(res.statusCode === 404)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -135,7 +137,7 @@ exports.addRestaurant = async (req, res) => {
 
     const restaurant = await Restaurant.create(validationResult);
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       data: restaurant,
     });
@@ -146,13 +148,18 @@ exports.addRestaurant = async (req, res) => {
       res.status(422);
     }
 
-    if (!res.statusCode === 422) {
+    if (error.details) {
+      res.status(422);
+    }
+
+    if (!(res.statusCode === 422)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -192,18 +199,23 @@ exports.updateRestaurant = async (req, res) => {
     const updatedRestaurant = await restaurant.update(validationResult);
 
     // 204
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: updatedRestaurant,
     });
   } catch (error) {
-    if (!res.statusCode === 404) {
+    if (error.details) {
+      res.status(422);
+    }
+
+    if (!(res.statusCode === 404) || !(res.statusCode === 422)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -213,9 +225,9 @@ exports.updateRestaurant = async (req, res) => {
 // @route DELETE /api/v1/restaurants/:id
 // @access Public
 exports.deleteRestaurant = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
+  try {
     const restaurant = await Restaurant.findOne({
       where: { restaurant_id: id },
     });
@@ -229,18 +241,19 @@ exports.deleteRestaurant = async (req, res) => {
       where: { restaurant_id: id },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: `Restaurant ${restaurant.name} and all of its reviews were successfully deleted`,
     });
   } catch (error) {
-    if (!res.statusCode === 404) {
+    if (!(res.statusCode === 404)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -257,15 +270,16 @@ exports.getReviews = async (req, res) => {
   try {
     const reviews = await Review.findAll();
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: reviews,
       count: reviews.length,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -275,9 +289,9 @@ exports.getReviews = async (req, res) => {
 // @route GET /api/v1/reviews/restaurant/:id
 // @access Public
 exports.getReviewsForRestaurant = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
+  try {
     const restaurant = await Restaurant.findOne({
       where: { restaurant_id: id },
     });
@@ -290,7 +304,7 @@ exports.getReviewsForRestaurant = async (req, res) => {
       attributes: { exclude: ['restaurant_id'] },
     });
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: {
         restaurant: {
@@ -303,13 +317,14 @@ exports.getReviewsForRestaurant = async (req, res) => {
       },
     });
   } catch (error) {
-    if (!res.statusCode === 404) {
+    if (!(res.statusCode === 404)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -319,9 +334,9 @@ exports.getReviewsForRestaurant = async (req, res) => {
 // @route GET /api/v1/reviews/:id
 // @access Public
 exports.getReview = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
+  try {
     const review = await Review.findOne({
       where: { review_id: id },
     });
@@ -330,18 +345,19 @@ exports.getReview = async (req, res) => {
       throw new Error(`Review with ID ${id} doesn't exist`);
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: review,
     });
   } catch (error) {
-    if (!res.statusCode === 404) {
+    if (!(res.statusCode === 404)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -373,18 +389,23 @@ exports.addReview = async (req, res) => {
       },
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       data: reviewWithAssociations,
     });
   } catch (error) {
-    if (!res.statusCode === 404 || !res.statusCode === 422) {
+    if (error.details) {
+      res.status(422);
+    }
+
+    if (!(res.statusCode === 404) || !(res.statusCode === 422)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -394,13 +415,9 @@ exports.addReview = async (req, res) => {
 // @route PATCH /api/v1/reviews/:id
 // @access Public
 exports.updateReview = async (req, res) => {
-  for (let key in req.body) {
-    key = key.trim().toString();
-  }
+  const { id } = req.params;
 
   try {
-    const { id } = req.params;
-
     Object.keys(req.body).forEach(
       (key) =>
         req.body[key] == (null || undefined || '') && delete req.body[key]
@@ -426,18 +443,23 @@ exports.updateReview = async (req, res) => {
     const updatedReview = await review.update(validationResult);
 
     // 204
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       data: updatedReview,
     });
   } catch (error) {
-    if (!res.statusCode === 404) {
+    if (error.details) {
+      res.status(422);
+    }
+
+    if (!(res.statusCode === 404) || !(res.statusCode === 422)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
@@ -447,9 +469,9 @@ exports.updateReview = async (req, res) => {
 // @route DELETE /api/v1/reviews/:id
 // @access Public
 exports.deleteReview = async (req, res) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
+  try {
     const review = await Review.findOne({
       where: { review_id: id },
     });
@@ -459,18 +481,19 @@ exports.deleteReview = async (req, res) => {
     }
     await review.destroy();
 
-    return res.status(200).json({
+    res.status(200).json({
       success: true,
       message: `Review with ID ${review.review_id} was successfully deleted`,
     });
   } catch (error) {
-    if (!res.statusCode === 404) {
+    if (!(res.statusCode === 404)) {
       res.status(500);
     }
 
-    return res.status(res.statusCode || 500).json({
+    res.status(res.statusCode || 500).json({
       success: false,
-      message: res.status === 500 ? 'There was a server error' : error.message,
+      message:
+        res.statusCode === 500 ? 'There was a server error' : error.message,
       stack: isProduction ? {} : error.stack,
     });
   }
