@@ -421,9 +421,7 @@ exports.updateReview = async (req, res) => {
       throw new Error(`Review with ID ${id} doesn't exist`);
     }
 
-    const validationResult = await patchRestaurantSchema.validateAsync(
-      req.body
-    );
+    const validationResult = await patchReviewSchema.validateAsync(req.body);
 
     const updatedReview = await review.update(validationResult);
 
