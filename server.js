@@ -4,7 +4,6 @@ const path = require('path');
 const assert = require('assert');
 const express = require('express');
 const passport = require('passport');
-const cors = require('cors');
 const Ddos = require('ddos');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -45,14 +44,20 @@ const app = express();
 const { ORIGIN } = process.env;
 assert(ORIGIN, 'ORIGIN is required');
 
-const corsOptions = {
-  origin: ORIGIN,
-  optionsSuccessStatus: 200, // Legacy browser support
-  methods: 'GET, POST, PATCH, DELETE',
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', ORIGIN);
+  res.setHeader('Access-Control-Request-Method', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PATCH, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.status(200).send();
+  } else {
+    next();
+  }
+});
 
 // Helmet Middleware
 app.use(helmet());

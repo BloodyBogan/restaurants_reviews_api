@@ -114,10 +114,12 @@ exports.postReviewSchema = Joi.object({
     'string.max': 'Review body must not be longer than 500 characters',
     'any.required': 'Review body is required',
   }),
-  name: Joi.string().empty().trim().max(255).messages({
+  name: Joi.string().empty().trim().min(3).max(255).required().messages({
     'string.base': 'Review name must be a type of text',
     'string.empty': 'Review name must not be empty',
+    'string.min': 'Review name must be at least 3 characters long',
     'string.max': 'Review name must not be longer than 255 characters',
+    'any.required': 'Review name is required',
   }),
 });
 
@@ -133,9 +135,10 @@ exports.patchReviewSchema = Joi.object({
     'string.min': 'Review body must be at least 25 characters long',
     'string.max': 'Review body must not be longer than 500 characters',
   }),
-  name: Joi.string().empty().trim().max(255).messages({
+  name: Joi.string().empty().trim().min(3).max(255).messages({
     'string.base': 'Review name must be a type of text',
     'string.empty': 'Review name must not be empty',
+    'string.min': 'Review name must be at least 3 characters long',
     'string.max': 'Review name must not be longer than 255 characters',
   }),
 });

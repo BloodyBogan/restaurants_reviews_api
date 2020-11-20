@@ -19,8 +19,7 @@ module.exports = (sequelize, type) => {
     },
     name: {
       type: type.STRING,
-      allowNull: true,
-      defaultValue: 'Anonymous',
+      allowNull: false,
     },
   });
 };

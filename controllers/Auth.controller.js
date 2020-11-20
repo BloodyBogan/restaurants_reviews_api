@@ -14,6 +14,9 @@ assert(JWT_EXPIRES_IN, 'JWT_EXPIRES_IN is required');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// @desc  Sign Up
+// @route POST /auth/signup
+// @access Public
 exports.postSignup = async (req, res) => {
   try {
     const validationResult = await signupUserSchema.validateAsync(req.body);
@@ -48,6 +51,9 @@ exports.postSignup = async (req, res) => {
   }
 };
 
+// @desc  Log In
+// @route POST /auth/login
+// @access Public
 exports.postLogin = async (req, res) => {
   try {
     const { email, password } = await loginUserSchema.validateAsync(req.body);

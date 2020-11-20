@@ -130,7 +130,7 @@ exports.getRestaurant = async (req, res) => {
 
 // @desc  Add restaurant
 // @route POST /api/v1/restaurants
-// @access Public
+// @access Private(ADMIN)
 exports.addRestaurant = async (req, res) => {
   try {
     const validationResult = await postRestaurantSchema.validateAsync(req.body);
@@ -167,7 +167,7 @@ exports.addRestaurant = async (req, res) => {
 
 // @desc  Update restaurant
 // @route PATCH /api/v1/restaurants/:id
-// @access Public
+// @access Private(ADMIN)
 exports.updateRestaurant = async (req, res) => {
   const { id } = req.params;
 
@@ -223,7 +223,7 @@ exports.updateRestaurant = async (req, res) => {
 
 // @desc  Delete restaurant
 // @route DELETE /api/v1/restaurants/:id
-// @access Public
+// @access Private(ADMIN)
 exports.deleteRestaurant = async (req, res) => {
   const { id } = req.params;
 
@@ -365,7 +365,7 @@ exports.getReview = async (req, res) => {
 
 // @desc  Add review
 // @route POST /api/v1/reviews
-// @access Public
+// @access Private(USER)
 exports.addReview = async (req, res) => {
   const { restaurant_id } = req.body;
 
@@ -376,7 +376,10 @@ exports.addReview = async (req, res) => {
       throw new Error(`Restaurant with ID ${restaurant_id} doesn't exist`);
     }
 
-    const validationResult = await postReviewSchema.validateAsync(req.body);
+    const validationResult = await postReviewSchema.validateAsync({
+      ...req.body,
+      name: req.user.username,
+    });
 
     const createdReview = await Review.create(validationResult);
 
@@ -413,7 +416,7 @@ exports.addReview = async (req, res) => {
 
 // @desc  Update review
 // @route PATCH /api/v1/reviews/:id
-// @access Public
+// @access Private(ADMIN)
 exports.updateReview = async (req, res) => {
   const { id } = req.params;
 
@@ -467,7 +470,7 @@ exports.updateReview = async (req, res) => {
 
 // @desc  Delete review
 // @route DELETE /api/v1/reviews/:id
-// @access Public
+// @access Private(ADMIN)
 exports.deleteReview = async (req, res) => {
   const { id } = req.params;
 

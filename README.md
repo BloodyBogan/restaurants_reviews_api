@@ -47,28 +47,27 @@ mysql -uroot -proot
 CREATE DATABASE restaurant_api;
 ```
 
-## API Endpoints
+## API Endpoints with Roles
 
 ### Restaurant Routes
 
-`GET /api/v1/restaurants/`  
-`GET /api/v1/restaurants/:id`  
-`POST /api/v1/restaurants/`  
-`PATCH /api/v1/restaurants/:id`  
-`DELETE /api/v1/restaurants/:id`
+`GET /api/v1/restaurants/` GUEST  
+`GET /api/v1/restaurants/:id` GUEST  
+`POST /api/v1/restaurants/` ADMIN  
+`PATCH /api/v1/restaurants/:id` ADMIN  
+`DELETE /api/v1/restaurants/:id` ADMIN
 
 ### Review Routes
 
-`GET /api/v1/reviews/`  
-`GET /api/v1/reviews/restaurant/:id`  
-`GET /api/v1/reviews/:id`  
-`POST /api/v1/reviews/`  
-`PATCH /api/v1/reviews/:id`  
-`DELETE /api/v1/reviews/:id`
+`GET /api/v1/reviews/` GUEST  
+`GET /api/v1/reviews/restaurant/:id` GUEST  
+`GET /api/v1/reviews/:id` GUEST  
+`POST /api/v1/reviews/` USER  
+`PATCH /api/v1/reviews/:id` ADMIN  
+`DELETE /api/v1/reviews/:id` ADMIN
 
 ## Things To Consider
 
-Protecting certain routes  
 Custom CORS setup  
 Tweaking the already-set rate limiting
 

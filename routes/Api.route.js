@@ -59,12 +59,12 @@ router
   .get(allowOnly(accessLevels.guest), getReview)
   .patch(
     passport.authenticate('jwt', { session: false }),
-    allowOnly(accessLevels.user),
+    allowOnly(accessLevels.admin),
     updateReview
   )
   .delete(
     passport.authenticate('jwt', { session: false }),
-    allowOnly(accessLevels.user),
+    allowOnly(accessLevels.admin),
     deleteReview
   );
 router
