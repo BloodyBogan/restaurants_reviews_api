@@ -68,6 +68,7 @@ CREATE DATABASE restaurant_api;
 
 ## Things To Consider
 
+CSRF Protection
 Custom CORS setup  
 Tweaking the already-set rate limiting
 
